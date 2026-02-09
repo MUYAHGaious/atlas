@@ -6,6 +6,7 @@ export interface Listing {
   condition: "New" | "Used";
   price: string;
   old_price?: string;
+  category?: string;
   fits: string;
   location: string;
   image: string;

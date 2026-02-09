@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Phone, Tag, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useListings, Listing, deleteListing, togglePinListing } from "@/data/listings";
+import { useListings, Listing } from "@/data/listings";
 import { categories } from "@/data/categories";
 import { motion, AnimatePresence } from "framer-motion";
 import { isAdmin } from "@/utils/auth";
@@ -57,21 +57,25 @@ const ListingsSection = ({ initialCategory }: ListingsSectionProps) => {
 
     let matchesCategory = true;
     if (initialCategory) {
-      const categoryObj = categories.find(c => c.label === initialCategory);
-      if (categoryObj) {
-        if (categoryObj.label === "OTHER") {
-          // If "OTHER", check if it DOES NOT match any of the known brands
-          const allBrands = categories.filter(c => c.label !== "OTHER").flatMap(c => c.brands);
-          matchesCategory = !allBrands.some(brand =>
-            item.title.toLowerCase().includes(brand.toLowerCase()) ||
-            (item.description && item.description.toLowerCase().includes(brand.toLowerCase()))
-          );
-        } else {
-          // Check if any of the brands for this category are in the title or description
-          matchesCategory = categoryObj.brands.some(brand =>
-            item.title.toLowerCase().includes(brand.toLowerCase()) ||
-            (item.description && item.description.toLowerCase().includes(brand.toLowerCase()))
-          );
+      if (item.category) {
+        // Use explicit category if available
+        matchesCategory = item.category === initialCategory;
+      } else {
+        // Fallback to fuzzy search for legacy items
+        const categoryObj = categories.find(c => c.label === initialCategory);
+        if (categoryObj) {
+          if (categoryObj.label === "OTHER") {
+            const allBrands = categories.filter(c => c.label !== "OTHER").flatMap(c => c.brands);
+            matchesCategory = !allBrands.some(brand =>
+              item.title.toLowerCase().includes(brand.toLowerCase()) ||
+              (item.description && item.description.toLowerCase().includes(brand.toLowerCase()))
+            );
+          } else {
+            matchesCategory = categoryObj.brands.some(brand =>
+              item.title.toLowerCase().includes(brand.toLowerCase()) ||
+              (item.description && item.description.toLowerCase().includes(brand.toLowerCase()))
+            );
+          }
         }
       }
     }

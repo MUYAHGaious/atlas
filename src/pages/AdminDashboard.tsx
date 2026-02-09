@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 
 import Footer from "@/components/Footer";
 import { useQueryClient } from "@tanstack/react-query";
+import { categories } from "@/data/categories";
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
@@ -22,6 +23,7 @@ const AdminDashboard = () => {
     const [condition, setCondition] = useState("New");
     const [price, setPrice] = useState("");
     const [oldPrice, setOldPrice] = useState("");
+    const [category, setCategory] = useState("OTHER");
     const [fits, setFits] = useState("");
     const [location, setLocation] = useState("");
     const [description, setDescription] = useState("");
@@ -46,6 +48,7 @@ const AdminDashboard = () => {
             setCondition(existingListing.condition);
             setPrice(existingListing.price || "");
             setOldPrice(existingListing.old_price || "");
+            setCategory(existingListing.category || "OTHER");
             setFits(existingListing.fits || "");
             setLocation(existingListing.location);
             setDescription(existingListing.description || "");
@@ -90,6 +93,7 @@ const AdminDashboard = () => {
         formData.append("condition", condition);
         formData.append("price", price);
         formData.append("old_price", oldPrice);
+        formData.append("category", category);
         formData.append("fits", fits);
         formData.append("location", location);
         formData.append("description", description);
@@ -214,6 +218,18 @@ const AdminDashboard = () => {
                                     onChange={(e) => setOldPrice(e.target.value)}
                                     placeholder="e.g. $2,800"
                                 />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium mb-1 text-muted-foreground uppercase tracking-wider">Category (Truck Brand)</label>
+                                <select
+                                    className="w-full rounded border border-border bg-muted p-3 focus:ring-1 focus:ring-primary outline-none transition-all appearance-none cursor-pointer"
+                                    value={category}
+                                    onChange={(e) => setCategory(e.target.value)}
+                                >
+                                    {categories.map((cat) => (
+                                        <option key={cat.label} value={cat.label}>{cat.label}</option>
+                                    ))}
+                                </select>
                             </div>
                         </div>
 

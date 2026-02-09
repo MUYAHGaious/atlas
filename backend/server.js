@@ -47,6 +47,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
       condition TEXT NOT NULL,
       price TEXT NOT NULL,
       old_price TEXT,
+      category TEXT,
       fits TEXT NOT NULL,
       location TEXT NOT NULL,
       image TEXT NOT NULL,
@@ -60,6 +61,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
                 db.run("ALTER TABLE listings ADD COLUMN images TEXT", (err) => { });
                 db.run("ALTER TABLE listings ADD COLUMN pinned INTEGER DEFAULT 0", (err) => { });
                 db.run("ALTER TABLE listings ADD COLUMN old_price TEXT", (err) => { });
+                db.run("ALTER TABLE listings ADD COLUMN category TEXT", (err) => { });
             }
         });
     }
@@ -96,11 +98,12 @@ app.get('/api/listings/:id', (req, res) => {
 });
 
 app.post('/api/listings', upload.any(), (req, res) => {
-    const { title, condition, price, old_price, fits, location, description, pinned } = req.body;
+    const { title, condition, price, old_price, category, fits, location, description, pinned } = req.body;
     console.log('--- NEW LISTING ---');
     console.log('Title:', title);
     console.log('Price:', price);
     console.log('Old Price:', old_price);
+    console.log('Category:', category);
 
     const files = req.files || [];
     const imagePaths = files.map(file => `/uploads/${file.filename}`);
@@ -108,8 +111,8 @@ app.post('/api/listings', upload.any(), (req, res) => {
     const imagesJson = JSON.stringify(imagePaths);
     const isPinned = pinned === 'true' || pinned === '1' || pinned === 1 ? 1 : 0;
 
-    const sql = `INSERT INTO listings (title, condition, price, old_price, fits, location, image, images, description, pinned) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    const params = [title, condition, price, old_price, fits, location, mainImage, imagesJson, description, isPinned];
+    const sql = `INSERT INTO listings (title, condition, price, old_price, category, fits, location, image, images, description, pinned) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    const params = [title, condition, price, old_price, category, fits, location, mainImage, imagesJson, description, isPinned];
 
     db.run(sql, params, function (err) {
         if (err) {
@@ -125,11 +128,12 @@ app.post('/api/listings', upload.any(), (req, res) => {
 });
 
 app.put('/api/listings/:id', upload.any(), (req, res) => {
-    const { title, condition, price, old_price, fits, location, description, pinned } = req.body;
+    const { title, condition, price, old_price, category, fits, location, description, pinned } = req.body;
     const id = req.params.id;
     console.log('--- UPDATE LISTING ---', id);
     console.log('Price:', price);
     console.log('Old Price:', old_price);
+    console.log('Category:', category);
 
     const isPinned = pinned === 'true' || pinned === '1' || pinned === 1 ? 1 : 0;
 
@@ -138,11 +142,11 @@ app.put('/api/listings/:id', upload.any(), (req, res) => {
         const imagePaths = req.files.map(file => `/uploads/${file.filename}`);
         const mainImage = imagePaths[0];
         const imagesJson = JSON.stringify(imagePaths);
-        sql = `UPDATE listings SET title = ?, condition = ?, price = ?, old_price = ?, fits = ?, location = ?, image = ?, images = ?, description = ?, pinned = ? WHERE id = ?`;
-        params = [title, condition, price, old_price, fits, location, mainImage, imagesJson, description, isPinned, id];
+        sql = `UPDATE listings SET title = ?, condition = ?, price = ?, old_price = ?, category = ?, fits = ?, location = ?, image = ?, images = ?, description = ?, pinned = ? WHERE id = ?`;
+        params = [title, condition, price, old_price, category, fits, location, mainImage, imagesJson, description, isPinned, id];
     } else {
-        sql = `UPDATE listings SET title = ?, condition = ?, price = ?, old_price = ?, fits = ?, location = ?, description = ?, pinned = ? WHERE id = ?`;
-        params = [title, condition, price, old_price, fits, location, description, isPinned, id];
+        sql = `UPDATE listings SET title = ?, condition = ?, price = ?, old_price = ?, category = ?, fits = ?, location = ?, description = ?, pinned = ? WHERE id = ?`;
+        params = [title, condition, price, old_price, category, fits, location, description, isPinned, id];
     }
 
     db.run(sql, params, function (err) {
