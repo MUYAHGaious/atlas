@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 export interface Listing {
   id: number;
   title: string;
-  condition: "New" | "Used";
+  condition: "New" | "Used" | "Like New";
   price: string;
   old_price?: string;
   category?: string;

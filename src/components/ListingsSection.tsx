@@ -16,7 +16,7 @@ interface ListingsSectionProps {
 const ListingsSection = ({ initialCategory }: ListingsSectionProps) => {
   const queryClient = useQueryClient();
   const { data: listings, isLoading, error } = useListings();
-  const [filter, setFilter] = useState<"All" | "New" | "Used">("All");
+  const [filter, setFilter] = useState<"All" | "New" | "Used" | "Like New">("All");
 
   const handleTogglePin = async (id: number) => {
     try {
@@ -112,6 +112,12 @@ const ListingsSection = ({ initialCategory }: ListingsSectionProps) => {
               NEW
             </button>
             <button
+              onClick={() => setFilter("Like New")}
+              className={`px-3 py-1.5 rounded text-xs font-heading transition-colors ${filter === "Like New" ? "bg-amber-500 text-black" : "bg-secondary text-secondary-foreground hover:bg-muted"}`}
+            >
+              LIKE NEW
+            </button>
+            <button
               onClick={() => setFilter("Used")}
               className={`px-3 py-1.5 rounded text-xs font-heading transition-colors ${filter === "Used" ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground hover:bg-muted"}`}
             >
@@ -172,7 +178,9 @@ const ListingCard = ({
           <span
             className={`px-2.5 py-0.5 rounded text-[10px] font-heading font-semibold uppercase tracking-wider ${condition === "New"
               ? "bg-primary text-primary-foreground"
-              : "bg-secondary text-secondary-foreground"
+              : condition === "Like New"
+                ? "bg-amber-500 text-black shadow-amber"
+                : "bg-secondary text-secondary-foreground"
               }`}
           >
             {condition}

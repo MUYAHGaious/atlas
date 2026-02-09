@@ -195,6 +195,7 @@ const AdminDashboard = () => {
                                     onChange={(e) => setCondition(e.target.value)}
                                 >
                                     <option value="New">New</option>
+                                    <option value="Like New">Like New</option>
                                     <option value="Used">Used</option>
                                 </select>
                             </div>
