@@ -1,5 +1,6 @@
 import { Phone, Mail, MapPin, Facebook } from "lucide-react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import logo from "@/assets/logo.png";
 
 const Footer = () => (
@@ -33,10 +34,10 @@ const Footer = () => (
         >
           <h4 className="font-heading text-xs font-bold text-foreground mb-4 uppercase tracking-[0.2em]">QUICK LINKS</h4>
           <ul className="space-y-3 text-sm text-muted-foreground font-heading uppercase tracking-widest text-[11px]">
-            <li><a href="#inventory" className="hover:text-primary transition-colors">Browse Inventory</a></li>
-            <li><a href="#categories" className="hover:text-primary transition-colors">Categories</a></li>
-            <li><a href="#about" className="hover:text-primary transition-colors">Why Atlas</a></li>
-            <li><a href="#contact" className="hover:text-primary transition-colors">Contact Us</a></li>
+            <li><Link to="/inventory" className="hover:text-primary transition-colors">Browse Inventory</Link></li>
+            <li><a href="/#categories" className="hover:text-primary transition-colors">Categories</a></li>
+            <li><a href="/#about" className="hover:text-primary transition-colors">Why Atlas</a></li>
+            <li><a href="/#contact" className="hover:text-primary transition-colors">Contact Us</a></li>
           </ul>
         </motion.div>
 

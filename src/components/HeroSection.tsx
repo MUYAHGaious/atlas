@@ -67,7 +67,7 @@ const HeroSection = () => {
               CALL TO BUY
             </a>
             <a
-              href="#inventory"
+              href="/inventory"
               className="flex items-center justify-center gap-2 bg-secondary text-secondary-foreground px-6 py-3.5 rounded font-heading font-semibold text-lg hover:bg-muted transition-colors border border-border"
             >
               <Search className="w-5 h-5" />

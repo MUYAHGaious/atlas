@@ -1,8 +1,11 @@
-import { Phone, Menu, X, Facebook } from "lucide-react";
+import { Phone, Menu, X, Facebook, ChevronDown, List } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { categories } from "@/data/categories";
+import { isAdmin, logout } from "@/utils/auth";
 import logo from "@/assets/logo.png";
+import Footer from "@/components/Footer";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -49,10 +52,39 @@ const Header = () => {
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-8 text-xs font-heading font-bold uppercase tracking-widest">
           <Link to="/" className="text-foreground hover:text-primary transition-colors">Home</Link>
-          <a href="/#inventory" className="text-foreground hover:text-primary transition-colors">Inventory</a>
-          <a href="/#categories" className="text-foreground hover:text-primary transition-colors">Categories</a>
-          <a href="/#about" className="text-foreground hover:text-primary transition-colors">About</a>
+          <Link to="/inventory" className="text-foreground hover:text-primary transition-colors">Inventory</Link>
+
+          <div className="relative group/dropdown">
+            <button className="flex items-center gap-1 text-foreground hover:text-primary transition-colors uppercase">
+              Categories
+              <ChevronDown className="w-3.5 h-3.5 group-hover/dropdown:rotate-180 transition-transform duration-300" />
+            </button>
+            <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:visible transition-all duration-300 min-w-[200px]">
+              <div className="bg-card border border-border rounded-lg p-2 shadow-xl backdrop-blur-md">
+                {categories.map((cat) => (
+                  <Link
+                    key={cat.label}
+                    to={`/inventory?category=${encodeURIComponent(cat.label)}`}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded hover:bg-primary/10 text-foreground transition-colors group/item"
+                  >
+                    <span className="normal-case font-body tracking-normal font-semibold">{cat.label}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+
           <a href="/#contact" className="text-foreground hover:text-primary transition-colors">Contact</a>
+
+          {isAdmin() && (
+            <button
+              onClick={logout}
+              className="ml-4 pl-4 border-l border-border text-xs font-heading font-bold text-destructive hover:opacity-80 transition-opacity uppercase tracking-widest"
+            >
+              Logout
+            </button>
+          )}
+
           <a
             href="https://www.facebook.com/profile.php?id=61586741605227"
             target="_blank"
@@ -65,17 +97,6 @@ const Header = () => {
 
         {/* CTA + mobile menu */}
         <div className="flex items-center gap-3">
-          {localStorage.getItem("adminToken") && (
-            <button
-              onClick={() => {
-                localStorage.removeItem("adminToken");
-                window.location.href = "/admin";
-              }}
-              className="text-[10px] font-heading font-bold text-muted-foreground hover:text-red-500 transition-colors uppercase mr-2"
-            >
-              Logout
-            </button>
-          )}
           <motion.a
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -104,12 +125,27 @@ const Header = () => {
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             className="md:hidden border-t border-border bg-card overflow-hidden"
           >
-            <nav className="container flex flex-col py-6 gap-4 font-heading font-bold uppercase tracking-widest text-sm">
-              <Link to="/" className="text-foreground hover:text-primary py-2 border-b border-border/50" onClick={() => setMenuOpen(false)}>Home</Link>
-              <a href="/#inventory" className="text-foreground hover:text-primary py-2 border-b border-border/50" onClick={() => setMenuOpen(false)}>Inventory</a>
-              <a href="/#categories" className="text-foreground hover:text-primary py-2 border-b border-border/50" onClick={() => setMenuOpen(false)}>Categories</a>
-              <a href="/#about" className="text-foreground hover:text-primary py-2 border-b border-border/50" onClick={() => setMenuOpen(false)}>About</a>
-              <a href="/#contact" className="text-foreground hover:text-primary py-2 border-b border-border/50" onClick={() => setMenuOpen(false)}>Contact</a>
+            <nav className="container flex flex-col py-6 gap-2 font-heading font-bold uppercase tracking-widest text-sm">
+              <Link to="/" className="text-foreground hover:text-primary py-3 border-b border-border/50" onClick={() => setMenuOpen(false)}>Home</Link>
+              <Link to="/inventory" className="text-foreground hover:text-primary py-3 border-b border-border/50" onClick={() => setMenuOpen(false)}>Inventory</Link>
+
+              <MobileCategoriesSubmenu setMenuOpen={setMenuOpen} />
+
+              <a href="/#about" className="text-foreground hover:text-primary py-3 border-b border-border/50" onClick={() => setMenuOpen(false)}>About</a>
+              <a href="/#contact" className="text-foreground hover:text-primary py-3 border-b border-border/50" onClick={() => setMenuOpen(false)}>Contact</a>
+
+              {isAdmin() && (
+                <button
+                  onClick={() => {
+                    logout();
+                    setMenuOpen(false);
+                  }}
+                  className="text-destructive text-left py-3 border-b border-border/50 font-heading font-bold uppercase tracking-widest text-xs"
+                >
+                  Logout
+                </button>
+              )}
+
               <a
                 href="tel:+18254184823"
                 className="flex items-center justify-center gap-2 bg-primary text-primary-foreground px-4 py-4 rounded font-heading font-bold mt-2 shadow-amber"
@@ -122,6 +158,45 @@ const Header = () => {
         )}
       </AnimatePresence>
     </header>
+  );
+};
+
+const MobileCategoriesSubmenu = ({ setMenuOpen }: { setMenuOpen: (val: boolean) => void }) => {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div className="border-b border-border/50">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="flex items-center justify-between w-full text-foreground hover:text-primary py-3"
+      >
+        <span>Categories</span>
+        <ChevronDown className={`w-4 h-4 transition-transform ${expanded ? "rotate-180" : ""}`} />
+      </button>
+      <AnimatePresence>
+        {expanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden bg-muted/30 rounded-lg mb-2"
+          >
+            <div className="py-2 flex flex-col">
+              {categories.map((cat) => (
+                <Link
+                  key={cat.label}
+                  to={`/inventory?category=${encodeURIComponent(cat.label)}`}
+                  className="flex items-center gap-3 px-4 py-2.5 text-foreground hover:text-primary transition-colors text-xs font-semibold"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <span className="normal-case">{cat.label}</span>
+                </Link>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 };
 

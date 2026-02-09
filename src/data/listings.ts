@@ -5,10 +5,13 @@ export interface Listing {
   title: string;
   condition: "New" | "Used";
   price: string;
+  old_price?: string;
   fits: string;
   location: string;
   image: string;
+  images?: string[];
   description?: string;
+  pinned?: number;
 }
 
 export const useListings = () => {

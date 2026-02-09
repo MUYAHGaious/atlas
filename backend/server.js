@@ -46,23 +46,37 @@ const db = new sqlite3.Database(dbPath, (err) => {
       title TEXT NOT NULL,
       condition TEXT NOT NULL,
       price TEXT NOT NULL,
+      old_price TEXT,
       fits TEXT NOT NULL,
       location TEXT NOT NULL,
       image TEXT NOT NULL,
+      images TEXT,
       description TEXT,
+      pinned INTEGER DEFAULT 0,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`);
+    )`, (err) => {
+            if (!err) {
+                // Migrations
+                db.run("ALTER TABLE listings ADD COLUMN images TEXT", (err) => { });
+                db.run("ALTER TABLE listings ADD COLUMN pinned INTEGER DEFAULT 0", (err) => { });
+                db.run("ALTER TABLE listings ADD COLUMN old_price TEXT", (err) => { });
+            }
+        });
     }
 });
 
 app.get('/api/listings', (req, res) => {
-    const sql = "SELECT * FROM listings ORDER BY created_at DESC";
+    const sql = "SELECT * FROM listings ORDER BY pinned DESC, created_at DESC";
     db.all(sql, [], (err, rows) => {
         if (err) {
             res.status(400).json({ "error": err.message });
             return;
         }
-        res.json(rows);
+        const parsedRows = rows.map(row => ({
+            ...row,
+            images: row.images ? JSON.parse(row.images) : [row.image]
+        }));
+        res.json(parsedRows);
     });
 });
 
@@ -74,20 +88,32 @@ app.get('/api/listings/:id', (req, res) => {
             res.status(400).json({ "error": err.message });
             return;
         }
+        if (row) {
+            row.images = row.images ? JSON.parse(row.images) : [row.image];
+        }
         res.json(row);
     });
 });
 
-app.post('/api/listings', upload.single('image'), (req, res) => {
-    const { title, condition, price, fits, location, description } = req.body;
-    // Keep image path relative to server root e.g., /uploads/filename.jpg
-    const image = req.file ? `/uploads/${req.file.filename}` : '';
+app.post('/api/listings', upload.any(), (req, res) => {
+    const { title, condition, price, old_price, fits, location, description, pinned } = req.body;
+    console.log('--- NEW LISTING ---');
+    console.log('Title:', title);
+    console.log('Price:', price);
+    console.log('Old Price:', old_price);
 
-    const sql = `INSERT INTO listings (title, condition, price, fits, location, image, description) VALUES (?,?,?,?,?,?,?)`;
-    const params = [title, condition, price, fits, location, image, description];
+    const files = req.files || [];
+    const imagePaths = files.map(file => `/uploads/${file.filename}`);
+    const mainImage = imagePaths[0] || '';
+    const imagesJson = JSON.stringify(imagePaths);
+    const isPinned = pinned === 'true' || pinned === '1' || pinned === 1 ? 1 : 0;
+
+    const sql = `INSERT INTO listings (title, condition, price, old_price, fits, location, image, images, description, pinned) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    const params = [title, condition, price, old_price, fits, location, mainImage, imagesJson, description, isPinned];
 
     db.run(sql, params, function (err) {
         if (err) {
+            console.error('Insert error:', err.message);
             res.status(400).json({ "error": err.message });
             return;
         }
@@ -95,6 +121,70 @@ app.post('/api/listings', upload.single('image'), (req, res) => {
             "message": "success",
             "data": { id: this.lastID }
         });
+    });
+});
+
+app.put('/api/listings/:id', upload.any(), (req, res) => {
+    const { title, condition, price, old_price, fits, location, description, pinned } = req.body;
+    const id = req.params.id;
+    console.log('--- UPDATE LISTING ---', id);
+    console.log('Price:', price);
+    console.log('Old Price:', old_price);
+
+    const isPinned = pinned === 'true' || pinned === '1' || pinned === 1 ? 1 : 0;
+
+    let sql, params;
+    if (req.files && req.files.length > 0) {
+        const imagePaths = req.files.map(file => `/uploads/${file.filename}`);
+        const mainImage = imagePaths[0];
+        const imagesJson = JSON.stringify(imagePaths);
+        sql = `UPDATE listings SET title = ?, condition = ?, price = ?, old_price = ?, fits = ?, location = ?, image = ?, images = ?, description = ?, pinned = ? WHERE id = ?`;
+        params = [title, condition, price, old_price, fits, location, mainImage, imagesJson, description, isPinned, id];
+    } else {
+        sql = `UPDATE listings SET title = ?, condition = ?, price = ?, old_price = ?, fits = ?, location = ?, description = ?, pinned = ? WHERE id = ?`;
+        params = [title, condition, price, old_price, fits, location, description, isPinned, id];
+    }
+
+    db.run(sql, params, function (err) {
+        if (err) {
+            console.error('Update error:', err.message);
+            res.status(400).json({ "error": err.message });
+            return;
+        }
+        res.json({
+            "message": "success",
+            "changes": this.changes
+        });
+    });
+});
+
+app.patch('/api/listings/:id/toggle-pin', (req, res) => {
+    const id = req.params.id;
+    db.get("SELECT pinned FROM listings WHERE id = ?", [id], (err, row) => {
+        if (err || !row) {
+            res.status(404).json({ error: "Listing not found" });
+            return;
+        }
+        const newPinned = row.pinned ? 0 : 1;
+        db.run("UPDATE listings SET pinned = ? WHERE id = ?", [newPinned, id], function (err) {
+            if (err) {
+                res.status(400).json({ error: err.message });
+                return;
+            }
+            res.json({ message: "success", pinned: newPinned });
+        });
+    });
+});
+
+app.delete('/api/listings/:id', (req, res) => {
+    const id = req.params.id;
+    const sql = "DELETE FROM listings WHERE id = ?";
+    db.run(sql, id, function (err) {
+        if (err) {
+            res.status(400).json({ "error": err.message });
+            return;
+        }
+        res.json({ "message": "deleted", changes: this.changes });
     });
 });
 
