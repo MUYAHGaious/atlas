@@ -1,7 +1,8 @@
-import { Phone, Mail, MapPin, Facebook } from "lucide-react";
+import { Mail, MapPin, Facebook } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import logo from "@/assets/logo.png";
+import WhatsAppIcon from "./WhatsAppIcon";
 
 const Footer = () => (
   <footer id="contact" className="border-t border-border bg-card py-12 md:py-16">
@@ -68,9 +69,9 @@ const Footer = () => (
           <ul className="space-y-4 text-sm text-muted-foreground">
             <li className="flex items-center gap-3 group">
               <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                <Phone className="w-4 h-4 text-primary" />
+                <WhatsAppIcon className="w-4 h-4 text-primary" />
               </div>
-              <a href="tel:+18254184823" className="hover:text-primary transition-colors font-bold">(825) 418-4823</a>
+              <a href="https://wa.me/18254184823" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors font-bold">(825) 418-4823</a>
             </li>
             <li className="flex items-center gap-3 group">
               <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center group-hover:bg-primary/20 transition-colors">

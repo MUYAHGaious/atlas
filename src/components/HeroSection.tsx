@@ -1,7 +1,8 @@
-import { Phone, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import heroImage from "@/assets/hero.jpg";
 import heroMobile from "@/assets/hero-mobile.png";
 import { motion } from "framer-motion";
+import WhatsAppIcon from "./WhatsAppIcon";
 
 const HeroSection = () => {
   return (
@@ -60,11 +61,13 @@ const HeroSection = () => {
             className="flex flex-col sm:flex-row gap-3"
           >
             <a
-              href="tel:+18254184823"
+              href="https://wa.me/18254184823"
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 py-3.5 rounded font-heading font-semibold text-lg hover:opacity-90 transition-opacity shadow-amber"
             >
-              <Phone className="w-5 h-5" />
-              CALL TO BUY
+              <WhatsAppIcon className="w-5 h-5" />
+              WHATSAPP TO BUY
             </a>
             <a
               href="/inventory"

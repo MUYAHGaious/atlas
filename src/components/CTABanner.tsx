@@ -1,4 +1,4 @@
-import { Phone } from "lucide-react";
+import WhatsAppIcon from "./WhatsAppIcon";
 
 const CTABanner = () => (
   <section className="py-10 md:py-14 bg-primary">
@@ -7,14 +7,16 @@ const CTABanner = () => (
         READY TO FIND YOUR TRUCK BED?
       </h2>
       <p className="text-primary-foreground/80 mb-6 text-sm max-w-md mx-auto">
-        Skip the checkout — call us now to negotiate the best price and get your truck bed shipped fast.
+        Skip the checkout — WhatsApp us now to negotiate the best price and get your truck bed shipped fast.
       </p>
       <a
-        href="tel:+18254184823"
+        href="https://wa.me/18254184823"
+        target="_blank"
+        rel="noopener noreferrer"
         className="inline-flex items-center gap-2 bg-background text-foreground px-8 py-3.5 rounded font-heading font-bold text-lg hover:opacity-90 transition-opacity"
       >
-        <Phone className="w-5 h-5" />
-        (825) 418-4823
+        <WhatsAppIcon className="w-5 h-5" />
+        WHATSAPP US: (825) 418-4823
       </a>
     </div>
   </section>

@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Phone, MapPin, Tag, Check, List } from "lucide-react";
+import { ArrowLeft, MapPin, Tag, Check, List } from "lucide-react";
 import { useListing } from "@/data/listings";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import NotFound from "./NotFound";
 import { motion } from "framer-motion";
+import WhatsAppIcon from "@/components/WhatsAppIcon";
 
 const ListingDetails = () => {
     const { id } = useParams();
@@ -158,11 +159,13 @@ const ListingDetails = () => {
 
                             <div className="pt-4">
                                 <a
-                                    href="tel:+18254184823"
+                                    href="https://wa.me/18254184823"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     className="flex items-center justify-center gap-2 w-full sm:w-auto bg-primary text-primary-foreground px-8 py-4 rounded-lg font-heading font-bold text-lg hover:opacity-90 transition-opacity shadow-amber animate-pulse-glow"
                                 >
-                                    <Phone className="w-5 h-5" />
-                                    CALL TO BUY: (825) 418-4823
+                                    <WhatsAppIcon className="w-5 h-5" />
+                                    WHATSAPP TO BUY: (825) 418-4823
                                 </a>
                                 <p className="text-center sm:text-left text-xs text-muted-foreground mt-3">
                                     * Shipping available nationwide. Financing options pending.

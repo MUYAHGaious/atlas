@@ -1,10 +1,11 @@
-import { Phone, Menu, X, Facebook, ChevronDown, List } from "lucide-react";
+import { Menu, X, Facebook, ChevronDown, List } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { categories } from "@/data/categories";
 import { isAdmin, logout } from "@/utils/auth";
 import logo from "@/assets/logo.png";
+import WhatsAppIcon from "./WhatsAppIcon";
 import Footer from "@/components/Footer";
 
 const Header = () => {
@@ -25,10 +26,12 @@ const Header = () => {
           <motion.a
             initial={{ x: 20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            href="tel:+18254184823"
+            href="https://wa.me/18254184823"
+            target="_blank"
+            rel="noopener noreferrer"
             className="flex items-center gap-1.5 hover:opacity-80 transition-opacity font-heading"
           >
-            <Phone className="w-3.5 h-3.5" />
+            <WhatsAppIcon className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">(825) 418-4823</span>
           </motion.a>
         </div>
@@ -100,11 +103,13 @@ const Header = () => {
           <motion.a
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            href="tel:+18254184823"
+            href="https://wa.me/18254184823"
+            target="_blank"
+            rel="noopener noreferrer"
             className="hidden sm:flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded font-heading font-bold text-xs uppercase tracking-widest hover:opacity-90 transition-opacity animate-pulse-glow"
           >
-            <Phone className="w-3.5 h-3.5" />
-            CALL NOW
+            <WhatsAppIcon className="w-3.5 h-3.5" />
+            WHATSAPP
           </motion.a>
           <button
             className="md:hidden text-foreground p-1"
@@ -147,11 +152,13 @@ const Header = () => {
               )}
 
               <a
-                href="tel:+18254184823"
+                href="https://wa.me/18254184823"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 bg-primary text-primary-foreground px-4 py-4 rounded font-heading font-bold mt-2 shadow-amber"
               >
-                <Phone className="w-4 h-4" />
-                CALL TO BUY — (825) 418-4823
+                <WhatsAppIcon className="w-4 h-4" />
+                WHATSAPP TO BUY — (825) 418-4823
               </a>
             </nav>
           </motion.div>

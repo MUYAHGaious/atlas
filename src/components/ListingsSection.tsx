@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Phone, Tag, MapPin } from "lucide-react";
+import { Tag, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useListings, Listing } from "@/data/listings";
 import { categories } from "@/data/categories";
@@ -8,6 +8,7 @@ import { isAdmin } from "@/utils/auth";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { Trash2, Pin } from "lucide-react";
+import WhatsAppIcon from "./WhatsAppIcon";
 
 interface ListingsSectionProps {
   initialCategory?: string;
@@ -219,11 +220,13 @@ const ListingCard = ({
               DETAILS
             </Link>
             <a
-              href="tel:+18254184823"
+              href="https://wa.me/18254184823"
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex-1 flex items-center justify-center gap-2 bg-primary text-primary-foreground py-2.5 rounded font-heading font-semibold text-sm hover:opacity-90 transition-opacity"
             >
-              <Phone className="w-4 h-4" />
-              CALL
+              <WhatsAppIcon className="w-4 h-4" />
+              WHATSAPP
             </a>
           </div>
 
